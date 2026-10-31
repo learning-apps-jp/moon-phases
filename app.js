@@ -9,7 +9,7 @@ let angle=90,playing=false,last=0,question=0;
 const times={evening:{name:'夕方',caption:'夕方・日没ごろ',observer:90,top:'#172b49',bottom:'#a67771'},midnight:{name:'真夜中',caption:'真夜中・午前0時ごろ',observer:180,top:'#030817',bottom:'#14213d'},dawn:{name:'明け方',caption:'明け方・日の出ごろ',observer:270,top:'#263957',bottom:'#c28b7e'},noon:{name:'昼',caption:'昼・正午ごろ',observer:0,top:'#2469a7',bottom:'#92c7e1'}};
 let selectedTime='evening',observerVisible=true;
 function skyPosition(a,observer){let progress=((a-observer+90)%360+360)%360;return {visible:progress<=180,x:945-progress/180*890,y:180-125*Math.sin(progress*Math.PI/180)}}
-function drawSkyMoon(a){const c=skyMoonContext;c.clearRect(0,0,128,128);c.save();c.beginPath();c.arc(64,64,54,0,Math.PI*2);c.fillStyle='#223046';c.fill();const lit=new Path2D(phasePath(a,54,64));c.clip(lit);const light=c.createRadialGradient(44,36,2,64,64,76);light.addColorStop(0,'#fff0cc');light.addColorStop(.6,'#e9d6af');light.addColorStop(1,'#bda985');c.fillStyle=light;c.fillRect(0,0,128,128);for(const [x,y,r] of [[45,43,12],[80,54,16],[50,85,9],[84,86,6]]){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle='rgba(113,107,99,.12)';c.fill();c.beginPath();c.arc(x-1,y-1,r-2,Math.PI,Math.PI*1.8);c.strokeStyle='rgba(255,249,224,.2)';c.lineWidth=2;c.stroke()}c.restore();}
+function drawSkyMoon(a){$('skyPhaseShape').setAttribute('d',phasePath(a,23.6,0));}
 function updateSky(){const time=times[selectedTime],pos=skyPosition(angle,time.observer),sun=skyPosition(0,time.observer);$('skyMoon').setAttribute('transform',`translate(${pos.x} ${pos.y})`);$('skyMoon').style.display=pos.visible?'':'none';drawSkyMoon(angle);
 const newMoon=angularDistance(angle,0)<.05;$('skyNote').textContent=!pos.visible?'この月は、地平線の下':newMoon?'新月は太陽と同じ方向。通常は見えません。':'';
 $('skyMoon').style.opacity=newMoon?'.22':'1';$('sky').setAttribute('aria-label',time.name+'の月の位置。'+(!pos.visible?'地平線の下':newMoon?'新月は通常見えません':'東・南・西の空の模式図'));
@@ -19,7 +19,7 @@ $('skySummary').textContent=selectedTime==='noon'?'昼にも月は見えます�
 document.querySelectorAll('#timeButtons button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.time===selectedTime)));}
 document.querySelectorAll('#timeButtons button').forEach(b=>b.onclick=()=>{selectedTime=b.dataset.time;updateSky()});$('toggleObserver').onclick=()=>{observerVisible=!observerVisible;$('toggleObserver').setAttribute('aria-pressed',String(observerVisible));$('toggleObserver').textContent='人の表示：'+(observerVisible?'オン':'オフ');updateSky()};
 const ctx=$('moon').getContext('2d');
-const skyMoonContext=$('skyMoonCanvas').getContext('2d');
+
 function phasePath(a,r=15,c=18){let t=a*Math.PI/180,k=Math.cos(t),right=Math.sin(t)>=0,pts=[];for(let y=-r;y<=r;y+=.4){let edge=Math.sqrt(Math.max(0,r*r-y*y));pts.push([c+(right?edge:-edge),c+y]);}for(let y=r;y>=-r;y-=.4){let edge=Math.sqrt(Math.max(0,r*r-y*y));pts.push([c+(right?k*edge:-k*edge),c+y]);}return 'M'+pts.map(p=>p.join(',')).join('L')+'Z';}
 function icon(a){return `<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="#354154"/><path d="${phasePath(a)}" fill="#ffe9ad"/></svg>`;}
 names.forEach((n,i)=>{let b=document.createElement('button');b.innerHTML=icon(phaseAngles[i])+n;b.onclick=()=>{stop();set(phaseAngles[i])};$('phaseButtons').append(b);let t=i*Math.PI/4,x=290+174*Math.cos(t),y=255-174*Math.sin(t);$('stops').insertAdjacentHTML('beforeend',`<circle cx="${x}" cy="${y}" r="4" fill="#72839b"/>`)});
