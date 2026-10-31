@@ -23,3 +23,5 @@ dialog{position:fixed;top:50%;left:50%;right:auto;transform:translate(-50%,-50%)
  .phase-info{padding:7px 10px}.phase-info h2{font-size:24px;margin:4px}.phase-info>span{font-size:11px}.phase-info p{margin:4px;font-size:11px}.insight{padding:2px;margin:0 14px 10px}.insight p{margin:7px 0;font-size:11px}
  .controls{padding:8px 16px;margin-top:12px;gap:20px}.controls button{min-height:44px}.phase-buttons{grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;margin:10px 0 20px}.phase-buttons button{min-height:66px;padding:7px 2px;font-size:10px}.phase-buttons svg{width:26px;height:26px;margin-bottom:4px}
 }
+@media(min-width:900px) and (max-width:1400px) and (orientation:landscape) and (max-height:1024px){#orbit{height:clamp(275px,40vh,390px)!important}}
+@media(min-width:701px) and (max-width:899px){#orbit{height:355px!important}}
